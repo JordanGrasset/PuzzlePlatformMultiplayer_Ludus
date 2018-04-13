@@ -13,7 +13,26 @@ UCLASS()
 class PUZZLEMULTIMASTER_V1_API AMovingPlatform : public AStaticMeshActor
 {
 	GENERATED_BODY()
+
+public :
+
+	AMovingPlatform();
 	
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(EditAnywhere)
+		float speed = 60;
+
+	UPROPERTY(EditAnywhere, Meta = (MakeEditWidget = true))
+		FVector TargetLocation;
+
+private :
+
+	FVector GlobalTargetLocation;
+	FVector GlobalStartLocation;
+
 	
 	
 	
