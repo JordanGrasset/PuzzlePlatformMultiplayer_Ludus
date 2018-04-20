@@ -26,29 +26,42 @@ void AMovingPlatform::BeginPlay()
 void AMovingPlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (ActiveTriggers == 1) {
 
-	if (HasAuthority())//Si modele client/serveur l'autorité d'execu du code suivant est donné au serveur, Sinon donné à la première instance -game
-	{
-		FVector Location = GetActorLocation();
-		float JourneyLength = (GlobalTargetLocation - GlobalStartLocation).Size();
-		float JourneyTravelled = (Location - GlobalStartLocation).Size();
-		
-		if (JourneyTravelled >= JourneyLength) {
+		if (HasAuthority())//Si modele client/serveur l'autorité d'execu du code suivant est donné au serveur, Sinon donné à la première instance -game
+		{
+			FVector Location = GetActorLocation();
+			float JourneyLength = (GlobalTargetLocation - GlobalStartLocation).Size();
+			float JourneyTravelled = (Location - GlobalStartLocation).Size();
 
-			FVector Swap = GlobalStartLocation;
-			GlobalStartLocation = GlobalTargetLocation;
-			GlobalTargetLocation = Swap;
+			if (JourneyTravelled >= JourneyLength) {
 
+				FVector Swap = GlobalStartLocation;
+				GlobalStartLocation = GlobalTargetLocation;
+				GlobalTargetLocation = Swap;
+
+			}
+
+			FVector Direction = (GlobalTargetLocation - Location).GetSafeNormal();
+			Location += speed * DeltaTime * Direction;
+			SetActorLocation(Location);
+
+
+			//UE_LOG(LogTemp, Warning,TEXT("Begin called"));
 		}
-
-		FVector Direction = (GlobalTargetLocation - Location).GetSafeNormal();
-		Location += speed * DeltaTime * Direction;
-		SetActorLocation(Location);
-		
-
-		UE_LOG(LogTemp, Warning,TEXT("Begin called"));
 	}
 
+}
+
+void AMovingPlatform::AddActiveTrigger()
+{
+	ActiveTriggers++;
+}
+
+void AMovingPlatform::RemoveActiveTrigger()
+{
+	if (ActiveTriggers > 0)
+		ActiveTriggers--;
 }
 
 
